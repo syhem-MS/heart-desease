@@ -1,7 +1,7 @@
 # heart-desease
 
-La base de donnée utilisée dans ce projet provient de https://www.kaggle.com/johnsmith88/heart-disease-dataset.<br/>
-cette base contient  1025 àbservations  et 14 variabes : <br/>
+La base de données utilisée dans ce projet provient de https://www.kaggle.com/johnsmith88/heart-disease-dataset.<br/>
+cette base contient  1025 observations  et 14 variabes : <br/>
 
         age <br/>
         sex <br/>
