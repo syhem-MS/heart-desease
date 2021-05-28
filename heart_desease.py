@@ -14,13 +14,13 @@ df = pd.read_csv("/home/users/etudiant/Téléchargements/heart.csv",header = 0)
 print(type(df))
 print(df.shape)
 print(df.head())#affichage des 5 premieres lignes de la base
-print(df.columns)#affichage des noms de colomns
+print(df.columns)#affichage des noms de colonnes
 print(df.dtypes)#affichage du type de chaque variable
 print(df.describe(include='all'))#description des données
 """
 Certains indicateurs statistiques ne sont valables que pour les variables numériques
- (ex. moyenne, min, etc. pour age,tauxmax,...), et inversemment 
- pour les non-numériques (ex. top, freq, etc. pour sexe, typedouleur, ...),
+ (ex. moyenne, min, etc. pour age,...), et inversemment 
+ pour les non-numériques (ex. top, freq, etc. pour sexe, ...),
  d'où les 0.00000 danscertaines situations.
 """
 #%%
@@ -39,7 +39,7 @@ print(df.sort_values(by='age').head())
 for col in df.columns:
     print(df[col].dtype) 
 #%%
-#avec la librairie Numpy creation de fonctions
+#avec la librairie Numpy création de fonctions
 def operation(x):
     return(x.mean())#appel de la fonction sur l'ensemble des colonnes du DataFrame
 #axis = 0 ==> chaque colonne sera transmise à la fonction operation()
@@ -82,7 +82,7 @@ df.boxplot(column='age',by='target')
 
 #%%  
 """
-correlation
+corrélation
 """
 import seaborn as sns
 
@@ -122,7 +122,7 @@ plt.scatter(df.age[df.target==1],
             df.thalach[df.target==1], 
             c="tomato")
 
-#graphique des patients qui ne sont pas malade
+#graphique des patients qui ne sont pas malades
 plt.scatter(df.age[df.target==0], 
             df.thalach[df.target==0], 
             c="lightgreen")
@@ -136,12 +136,12 @@ plt.ylabel("Max Heart Rate");
 # Creation d'une  figure
 plt.figure(figsize=(10,6))
 
-#graphique des patients qui sont malade
+#graphique des patients qui sont malades
 plt.scatter(df.age[df.target==1], 
             df.chol[df.target==1], 
             c="r")
 
-#graphique des patients qui ne sont pas malade
+#graphique des patients qui ne sont pas malades
 plt.scatter(df.age[df.target==0], 
             df.chol[df.target==0], 
             c="b")
@@ -161,7 +161,7 @@ pd.crosstab(df.sex, df.fbs)
 
 """ 
 Machine learning: 
-        étape 1: separation de la base de données en deux sous bases: train et test
+        étape 1: séparation de la base de données en deux sous bases: train et test
         étape 2: randomforest
                  xgboost
 """
@@ -171,14 +171,14 @@ print(x.head())
 y=df.iloc[:,-1]#afficher la colonne target
 print(y.head()) 
 
-# étape 1/ separation de la base de données en deux sous bases: train et test
+# étape 1/ séparation de la base de données en deux sous bases: train et test
 
 from sklearn.model_selection import train_test_split
 
 np.random.seed(72)
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2) 
 print(len(x_train), len(x_test), len(y_train), len(y_test) )#verifier les dimensions
-#importing RandomForestClassifier
+
 
 
 #étape 2/ 
@@ -204,31 +204,29 @@ from xgboost import XGBClassifier
 xgb = XGBClassifier(learning_rate=0.01, n_estimators=25, max_depth=15,gamma=0.6, subsample=0.52,colsample_bytree=0.6,seed=27, 
                     reg_lambda=2, booster='dart', colsample_bylevel=0.6, colsample_bynode=0.5)
 xgb.fit(x_train, y_train)
-xgb_predicted = xgb.predict(x_test)
-xgb_conf_matrix = confusion_matrix(y_test, xgb_predicted)
-xgb_acc_score = accuracy_score(y_test, xgb_predicted)
+xgb_prediction = xgb.predict(x_test)
+xgb_confusion_matrice = confusion_matrix(y_test, xgb_prediction)
+accuracy = accuracy_score(y_test, xgb_prediction)
 print("confussion matrix")
-print(xgb_conf_matrix)
+print(xgb_confusion_matrice)
 print("\n")
-print("Accuracy de XGboost:",xgb_acc_score*100,'\n')
-print(classification_report(y_test,xgb_predicted))
+print("Accuracy de XGboost:",accuracy*100,'\n')
+print(classification_report(y_test,xgb_prediction))
 
 #variable importantes:
-imp_feature = pd.DataFrame({'Feature': ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach',
+var_import = pd.DataFrame({'Feature': ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach',
        'exang', 'oldpeak', 'slope', 'ca', 'thal'], 'Importance': xgb.feature_importances_})
 plt.figure(figsize=(10,4))
 plt.title("importance des variables ")
 plt.xlabel("importance ")
 plt.ylabel("features")
-plt.barh(imp_feature['Feature'],imp_feature['Importance'],color = 'rgbkymc')
+plt.barh(var_import['Feature'],var_import['Importance'],color = 'rgbkymc')
 plt.show()
 #%%
 """
 conclusion:
-Parmi les deux modeles construient on retient selui avec le modele xgboost car
-l'accuracy est de 89.75.
-(exang) et la douleur thoracique (cp) sont les facteurs  principaux
-pour qu'un pateint ait une  crise cardiaque.
+parmi les deux modèles construient on retient celui avec le modele xgboost car l'accuracy est de 89.75 %. 
+(exang) et la douleur thoracique (CP) sont les facteurs principaux pour qu'un patient ait une crise cardiaque.
 """
 
 
